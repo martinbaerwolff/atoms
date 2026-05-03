@@ -29,6 +29,28 @@ Domain vocabulary (DE → EN):
 6. **Soft-delete only.** Never `DELETE FROM`; always set `deleted_at` and filter it out in views/queries.
 7. **One DB session per request.** Use the `get_session` dependency; never instantiate engines/sessions in routers.
 8. **Schema changes go through Alembic.** Never edit production data without a migration script (when in cloud).
+9. **Spec-first.** Every feature, bug, and phase begins as a spec in `specs/`. Trivial fixes (≤ 10 LoC, clear cause) are exempt. See `specs/README.md`.
+
+---
+
+## Spec-driven development
+
+Each feature/bug/phase has exactly one Markdown file in `specs/<kebab-name>.md` that travels through the lifecycle: `ideated` → `planned` → `roasted` → `in_implementation` → `implemented` (or `abandoned`). Source of truth for *what is being built and why* is the spec — not the commit message or PR description.
+
+Four slash commands drive the lifecycle:
+
+| Command | Required model | What it does |
+|---|---|---|
+| `/ideate-spec <description>` | **Opus** | Creates a new spec at `status: ideated`, picks a kebab-case name, fills in the management summary. |
+| `/plan-spec <name>` | **Opus** | Fleshes out User Perspective + Technical Details, sets `status: planned`. |
+| `/roast-spec <name>` | **Opus** | Critiques the spec (≥ 5 points), records resolutions, sets `status: roasted`. |
+| `/implement-spec <name>` | **Sonnet** | Builds it — branch, code, tests, PR — and logs decisions/deviations in the spec. |
+
+Each command starts with a hard model-gate: if the wrong model family is active, the skill stops immediately and asks the user to switch via `/model`. There is no programmatic model switch in Claude Code.
+
+Spec-only commands (`ideate`/`plan`/`roast`) each open their own PR so discussion lives in PR comments. `implement-spec` opens a single PR containing both the code and the spec updates (Implementation Log, Final Implementation, status, related_prs).
+
+See `specs/README.md` for frontmatter schema and `specs/_template.md` for the empty starting point. The meta-spec `specs/spec-driven-development.md` documents this system itself.
 
 ---
 
@@ -143,11 +165,11 @@ GET        /health             DB ping
 
 ## Phase status
 
-- Phase 0 — tooling skeleton ✅
-- Phase 1 — DB schema + CRUD with TDD ✅ (33 tests green; Alembic migration 0001; all 5 resources)
-- Phase 2 — Atoms feed UI (next)
-- Phase 3 — metadata pickers + saved filters
-- Phase 4 — people/meetings/projects table feeds + drawers
+- [Phase 0 — tooling skeleton](specs/phase-0-tooling-skeleton.md) ✅
+- [Phase 1 — DB schema + CRUD](specs/phase-1-db-schema-and-crud.md) ✅
+- [Phase 2 — Atoms feed UI](specs/phase-2-atoms-feed-ui.md) ✅
+- [Phase 3 — metadata pickers + saved filters](specs/phase-3-metadata-pickers.md) (ideated)
+- Phase 4 — people/meetings/projects table feeds + drawers (no spec yet)
 - Phase 5 — cloud deployment (Hetzner + Cloudflare + Tailscale)
 
 Always check `git log --oneline -20` and `make ps` at session start to understand the actual state — this file can drift.
