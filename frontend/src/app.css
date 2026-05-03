@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind v4 theme. CSS variables in `@theme` are exposed as Tailwind
+ * utilities (e.g. `bg-petrol-500`, `font-sans`) AND as plain `var(...)`
+ * for custom CSS. Dark-mode tokens land in `@theme` later via prefers-color-scheme.
+ */
+@theme {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Petrol — primary accent. */
+  --color-petrol-50: #eaf3f9;
+  --color-petrol-100: #cfe2ee;
+  --color-petrol-200: #9ec5dd;
+  --color-petrol-300: #6ea7cb;
+  --color-petrol-400: #3d8aba;
+  --color-petrol-500: #1b6ca8;
+  --color-petrol-600: #155688;
+  --color-petrol-700: #104168;
+  --color-petrol-800: #0a2c47;
+  --color-petrol-900: #051727;
+
+  /* Surface / text — light mode. */
+  --color-surface: #ffffff;
+  --color-surface-2: #fafafa;
+  --color-surface-3: #f3f4f6;
+  --color-border: #e5e7eb;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+}
+
+html,
+body {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-feature-settings:
+    "ss01" on,
+    "cv11" on;
+}
+
+code,
+kbd,
+pre,
+samp,
+.font-mono {
+  font-family: var(--font-mono);
+}
