@@ -1,58 +1,54 @@
-"""Shared pytest fixtures.
-
-Phase 0: a minimal `client` that overrides the DB session with a fake
-that handles `SELECT 1`. Real testcontainers-based fixtures land in
-Phase 1 once we have a schema worth running migrations against.
-"""
+"""Pytest fixtures for Phase 1+: real Postgres via testcontainers + Alembic."""
 
 from __future__ import annotations
 
 from collections.abc import AsyncIterator, Iterator
-from typing import Any
+from pathlib import Path
 
 import pytest
+from alembic import command
+from alembic.config import Config
 from app.deps import get_session
 from app.main import app as fastapi_app
-from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from testcontainers.postgres import PostgresContainer
+
+_BACKEND_DIR = Path(__file__).parent.parent
 
 
-class _FakeResult:
-    def __init__(self, value: int) -> None:
-        self._value = value
-
-    def scalar_one(self) -> int:
-        return self._value
-
-
-class _FakeSession:
-    """Stand-in for AsyncSession that only knows SELECT 1."""
-
-    async def execute(self, *_args: Any, **_kwargs: Any) -> _FakeResult:
-        return _FakeResult(1)
-
-    async def __aenter__(self) -> _FakeSession:
-        return self
-
-    async def __aexit__(self, *_exc: object) -> None:
-        return None
+def _run_alembic(async_url: str) -> None:
+    cfg = Config(str(_BACKEND_DIR / "alembic.ini"))
+    cfg.set_main_option("sqlalchemy.url", async_url)
+    cfg.set_main_option("script_location", str(_BACKEND_DIR / "alembic"))
+    command.upgrade(cfg, "head")
 
 
-async def _override_session() -> AsyncIterator[_FakeSession]:
-    yield _FakeSession()
+@pytest.fixture(scope="session")
+def pg_url() -> Iterator[str]:
+    """Start a Postgres 17 container, run Alembic migrations, yield the async URL."""
+    with PostgresContainer("postgres:17-alpine", driver="asyncpg") as pg:
+        url = pg.get_connection_url()
+        _run_alembic(url)
+        yield url
 
 
 @pytest.fixture
-def app() -> Iterator[FastAPI]:
-    fastapi_app.dependency_overrides[get_session] = _override_session
+async def client(pg_url: str) -> AsyncIterator[AsyncClient]:
+    """Per-test HTTPX client wired to a real Postgres session."""
+    engine = create_async_engine(pg_url, echo=False)
+    maker = async_sessionmaker(engine, expire_on_commit=False, autoflush=False)
+
+    async def _override() -> AsyncIterator[AsyncSession]:
+        async with maker() as session:
+            yield session
+
+    fastapi_app.dependency_overrides[get_session] = _override
     try:
-        yield fastapi_app
+        async with AsyncClient(
+            transport=ASGITransport(app=fastapi_app), base_url="http://testserver"
+        ) as c:
+            yield c
     finally:
         fastapi_app.dependency_overrides.pop(get_session, None)
-
-
-@pytest.fixture
-async def client(app: FastAPI) -> AsyncIterator[AsyncClient]:
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as c:
-        yield c
+        await engine.dispose()

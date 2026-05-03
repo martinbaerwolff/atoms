@@ -15,7 +15,8 @@
     "test:unit": "vitest run -c vitest.config.ts",
     "test:unit:watch": "vitest -c vitest.config.ts",
     "test:e2e": "playwright test",
-    "test:e2e:install": "playwright install --with-deps chromium"
+    "test:e2e:install": "playwright install --with-deps chromium",
+    "generate:api": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/api/types.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
@@ -31,6 +32,7 @@
     "eslint-plugin-svelte": "^2.46.0",
     "globals": "^15.13.0",
     "jsdom": "^25.0.1",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.4.0",
     "prettier-plugin-svelte": "^3.5.1",
     "svelte": "^5.10.0",

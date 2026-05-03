@@ -85,12 +85,30 @@ Connection string (local dev): `postgresql://atoms:atoms@localhost:5432/atoms`
 
 ---
 
-## Standard views (Postgres VIEWs, defined in initial Alembic migration once Phase 1 lands)
+## API routes (Phase 1+)
+
+```
+GET/POST   /atoms              list + create
+GET/PATCH/DELETE /atoms/{id}   get, update, soft-delete
+GET        /atoms?q=...        fulltext search (German tsvector)
+GET/POST   /persons            list + create
+GET/PATCH/DELETE /persons/{id}
+GET/POST   /meetings           list + create (participant_ids in body)
+GET/PATCH/DELETE /meetings/{id}
+GET/POST   /projects
+GET/PATCH/DELETE /projects/{id}
+GET/POST   /saved-filters
+GET/PATCH/DELETE /saved-filters/{id}
+GET        /views/inbox        atoms where inbox=TRUE
+GET        /health             DB ping
+```
+
+## Standard views (Postgres VIEWs — created in migration 0001)
 
 - `v_inbox` — atoms with `inbox=TRUE`, not soft-deleted
 - `v_overdue_tasks` — tasks past deadline, status not in `done|cancelled`
-- `v_upcoming_reminders` — atoms with `reminder` in next 24h
-- `v_open_tasks` — open tasks sorted by priority then deadline
+- `v_upcoming_reminders` — atoms with `reminder` in future, not soft-deleted
+- `v_open_tasks` — open tasks sorted by priority then created_at
 
 ---
 
@@ -125,9 +143,9 @@ Connection string (local dev): `postgresql://atoms:atoms@localhost:5432/atoms`
 
 ## Phase status
 
-- Phase 0 — tooling skeleton (this commit)
-- Phase 1 — DB schema + CRUD with TDD (next)
-- Phase 2 — Atoms feed UI
+- Phase 0 — tooling skeleton ✅
+- Phase 1 — DB schema + CRUD with TDD ✅ (33 tests green; Alembic migration 0001; all 5 resources)
+- Phase 2 — Atoms feed UI (next)
 - Phase 3 — metadata pickers + saved filters
 - Phase 4 — people/meetings/projects table feeds + drawers
 - Phase 5 — cloud deployment (Hetzner + Cloudflare + Tailscale)

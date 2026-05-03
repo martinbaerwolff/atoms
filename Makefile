@@ -71,8 +71,8 @@ fresh: ## Drop volumes, recreate db, run migrations (DESTRUCTIVE)
 
 test: test-backend test-frontend ## Run all tests (backend + frontend unit). E2E via test-e2e.
 
-test-backend: ## pytest in the backend
-	cd backend && uv run pytest
+test-backend: ## pytest in the backend (includes dev extras: testcontainers etc.)
+	cd backend && uv sync --extra dev -q && uv run pytest
 
 test-frontend: ## vitest in the frontend
 	cd frontend && npm run test:unit

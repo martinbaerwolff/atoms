@@ -13,6 +13,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import dispose_engine, get_session
+from app.routers import atoms, meetings, persons, projects, saved_filters, views
 from app.settings import get_settings
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
@@ -61,6 +62,14 @@ async def health(session: SessionDep) -> dict[str, Any]:
         log.warning("db_ping_failed", error=str(exc))
         db_status = "error"
     return {"status": "ok", "db": db_status, "version": app.version}
+
+
+app.include_router(atoms.router)
+app.include_router(persons.router)
+app.include_router(meetings.router)
+app.include_router(projects.router)
+app.include_router(saved_filters.router)
+app.include_router(views.router)
 
 
 @app.get("/", tags=["meta"])
