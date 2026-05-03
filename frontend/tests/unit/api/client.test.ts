@@ -33,7 +33,7 @@ describe("listAtoms", () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => [mockAtom],
-      }),
+      })
     );
     const result = await listAtoms();
     expect(result).toEqual([mockAtom]);
@@ -41,19 +41,13 @@ describe("listAtoms", () => {
   });
 
   it("passes q param as query string", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: true, json: async () => [] }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => [] }));
     await listAtoms({ q: "test" });
     expect(fetch).toHaveBeenCalledWith("/api/atoms?q=test", undefined);
   });
 
   it("throws on non-ok response", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, status: 500 }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 500 }));
     await expect(listAtoms()).rejects.toThrow("HTTP 500");
   });
 });
@@ -65,14 +59,11 @@ describe("createAtom", () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => mockAtom,
-      }),
+      })
     );
     const result = await createAtom({ content: "Testinhalt" });
     expect(result).toEqual(mockAtom);
-    const [url, init] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [
-      string,
-      RequestInit,
-    ];
+    const [url, init] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [string, RequestInit];
     expect(url).toBe("/api/atoms");
     expect(init.method).toBe("POST");
     const body = JSON.parse(init.body as string);
@@ -81,10 +72,7 @@ describe("createAtom", () => {
   });
 
   it("throws on non-ok response", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, status: 422 }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 422 }));
     await expect(createAtom({ content: "x" })).rejects.toThrow("HTTP 422");
   });
 });
@@ -96,47 +84,32 @@ describe("updateAtom", () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ ...mockAtom, content: "geändert" }),
-      }),
+      })
     );
     const result = await updateAtom(mockAtom.id, { content: "geändert" });
     expect(result.content).toBe("geändert");
-    const [url, init] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [
-      string,
-      RequestInit,
-    ];
+    const [url, init] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [string, RequestInit];
     expect(url).toBe(`/api/atoms/${mockAtom.id}`);
     expect(init.method).toBe("PATCH");
   });
 
   it("throws on non-ok response", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, status: 404 }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 404 }));
     await expect(updateAtom("bad-id", {})).rejects.toThrow("HTTP 404");
   });
 });
 
 describe("deleteAtom", () => {
   it("DELETEs /api/atoms/:id", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: true, status: 204 }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, status: 204 }));
     await deleteAtom(mockAtom.id);
-    const [url, init] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [
-      string,
-      RequestInit,
-    ];
+    const [url, init] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [string, RequestInit];
     expect(url).toBe(`/api/atoms/${mockAtom.id}`);
     expect(init.method).toBe("DELETE");
   });
 
   it("throws on non-ok response", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, status: 404 }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 404 }));
     await expect(deleteAtom("bad-id")).rejects.toThrow("HTTP 404");
   });
 });
