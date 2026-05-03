@@ -80,6 +80,10 @@ exclude = ["alembic/versions/"]
 module = ["uuid_extensions", "uuid_extensions.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["testcontainers", "testcontainers.*"]
+ignore_missing_imports = true
+
 # --- pytest --------------------------------------------------------------
 [tool.pytest.ini_options]
 minversion = "8.0"

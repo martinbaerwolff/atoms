@@ -10,6 +10,7 @@ import app.models  # noqa: F401 — registers all ORM models in Base.metadata
 from alembic import context
 from app.models.base import Base
 from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.pool import NullPool
 
 config = context.config
 
@@ -46,7 +47,7 @@ def do_run_migrations(connection: object) -> None:
 
 
 async def run_migrations_online() -> None:
-    engine = create_async_engine(_get_url(), poolclass=None)  # type: ignore[call-overload]
+    engine = create_async_engine(_get_url(), poolclass=NullPool)
     async with engine.connect() as conn:
         await conn.run_sync(do_run_migrations)
     await engine.dispose()
