@@ -1,0 +1,24 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --accent: #10B981;
+  --accent-light: #D1FAE5;
+  --text: #111827;
+  --text-muted: #6B7280;
+  --border: #E5E7EB;
+  --bg: #FFFFFF;
+  --bg-hover: #F9FAFB;
+  --font: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+button { cursor: pointer; font-family: inherit; }
+input, textarea, select { font-family: inherit; }
