@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import persons
+from app.routers import persons, projects
 
 app = FastAPI(title="Atoms API")
 
@@ -13,6 +13,7 @@ app.add_middleware(
 )
 
 app.include_router(persons.router)
+app.include_router(projects.router)
 
 
 @app.get("/health")
