@@ -278,12 +278,17 @@
   .title-input {
     flex: 1;
     border: none;
+    border-bottom: 1px solid transparent;
     outline: none;
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--text);
     background: transparent;
+    transition: border-color 0.15s;
+    padding-bottom: 1px;
   }
+  .title-input:hover { border-bottom-color: var(--border); }
+  .title-input:focus { border-bottom-color: var(--accent); }
   .close-btn {
     background: none;
     border: none;

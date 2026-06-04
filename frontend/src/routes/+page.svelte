@@ -91,13 +91,13 @@
       <div class="table-header">
         <div></div>
         <div></div>
-        <div>Titel</div>
+        <div>Titel / Inhalt</div>
         <div>Status</div>
         <div>Prio</div>
         <div>Datum</div>
         <div>Wer</div>
         <div>Projekt</div>
-        <div></div>
+        <div>Erfasst</div>
       </div>
 
       {#if loading}
