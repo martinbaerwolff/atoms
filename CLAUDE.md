@@ -33,6 +33,11 @@ Ordne die Aufgabe ein, bevor du loslegst (frag mich im Zweifel):
 - Superpowers ist das Standard-Vorgehen für Planung, TDD, Subagenten und Review.
 - Diese Datei steht darüber: wo etwas kollidiert, gilt diese Datei.
 
+## Modell-Konfiguration
+- Immer `opusplan` als Modell-Einstellung: Opus für Planung (Plan-Modus), Sonnet für Implementierung.
+- Pläne, Designs und Brainstorming immer in einer Planungs-Session mit Opus schreiben.
+- Wenn das Modell nicht `opusplan` ist, den Nutzer darauf hinweisen und `/model opusplan` vorschlagen.
+
 ## Session-Workflow (wichtig)
 Planung und Implementierung laufen in getrennten Sessions:
 

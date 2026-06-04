@@ -244,7 +244,7 @@ Folgendes ist bewusst ausgelassen und kommt in späteren Phasen:
 | Mehrfachauswahl + Sammelbearbeitung | 3 |
 | Versionshistorie | 3 |
 | Anhänge | 4 |
-| Hetzner-Deployment | 5 |
+| Server-Deployment (Provider offen) | 5 |
 
 ---
 
@@ -256,7 +256,7 @@ Folgendes ist bewusst ausgelassen und kommt in späteren Phasen:
 | 2 | Filters: Filterzeile, gespeicherte Filtersets, Sortierung, Spalten |
 | 3 | Power: Mehrfachauswahl, Sammelbearbeitung, Versionshistorie |
 | 4 | Attachments: Datei-Anhänge |
-| 5 | Deploy: Hetzner + Cloudflare + Tailscale |
+| 5 | Deploy: Self-Hosted Server (Provider wird in Phase 5 entschieden) |
 
 ---
 
