@@ -19,3 +19,6 @@ __pycache__/
 frontend/node_modules/
 frontend/.svelte-kit/
 frontend/build/
+
+# Backups (only keep .gitkeep, not actual SQL dumps)
+backups/*.sql
