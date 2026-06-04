@@ -88,6 +88,18 @@
 
   <div class="content" class:panel-open={!!selectedAtom}>
     <div class="list-area">
+      <div class="table-header">
+        <div></div>
+        <div></div>
+        <div>Titel</div>
+        <div>Status</div>
+        <div>Prio</div>
+        <div>Datum</div>
+        <div>Wer</div>
+        <div>Projekt</div>
+        <div></div>
+      </div>
+
       {#if loading}
         <p class="empty">Lade…</p>
       {:else if error}
@@ -157,9 +169,35 @@
   }
 
   .content { display: flex; flex: 1; overflow: hidden; }
-  .list-area { flex: 1; overflow-y: auto; }
+  .list-area {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg-list);
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
   .content.panel-open .list-area { flex: 1; }
 
-  .empty { padding: 2rem 1.5rem; color: var(--text-muted); font-size: 0.875rem; }
+  .table-header {
+    display: grid;
+    grid-template-columns: var(--atom-cols);
+    align-items: center;
+    padding: 0.1rem 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-left: 0;
+    position: sticky;
+    top: 0;
+    background: var(--bg-list);
+    z-index: 1;
+    padding-bottom: 0.3rem;
+  }
+
+  .empty { padding: 2rem 0; color: var(--text-muted); font-size: 0.875rem; }
   .error { color: #EF4444; }
 </style>

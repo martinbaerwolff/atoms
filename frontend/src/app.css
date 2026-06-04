@@ -8,7 +8,11 @@
   --border: #E5E7EB;
   --bg: #FFFFFF;
   --bg-hover: #F9FAFB;
+  --bg-list: #F3F4F6;
   --font: 'Inter', system-ui, sans-serif;
+
+  /* Atom-Tabelle: Expand | Icon | Titel | Status | Prio | Datum | Personen | Projekte | Erfasst */
+  --atom-cols: 28px 28px 1fr 96px 62px 56px 80px 110px 32px;
 }
 
 body {

@@ -39,63 +39,67 @@
   onclick={() => onselect(atom)}
   onkeydown={(e) => e.key === 'Enter' && onselect(atom)}
 >
-  <div class="row-main">
-    <button
-      class="expand-btn"
-      onclick={(e) => { e.stopPropagation(); rowExpanded = !rowExpanded }}
-      aria-label="Aufklappen"
-    >
-      {isExpanded ? '∨' : '›'}
-    </button>
+  <button
+    class="col-expand"
+    onclick={(e) => { e.stopPropagation(); rowExpanded = !rowExpanded }}
+    aria-label="Aufklappen"
+  >
+    {isExpanded ? '∨' : '›'}
+  </button>
 
+  <div class="col-icon">
     <TypeIcon type={atom.type} />
-
-    <span class="title" class:strikethrough={atom.status === 'done'}>
-      {atom.title}
-    </span>
-
-    <div class="meta">
-      {#if atom.type === 'task' && atom.status}
-        <span class="status-badge status-{atom.status}">
-          {STATUS_LABELS[atom.status] ?? atom.status}
-        </span>
-      {/if}
-
-      {#if atom.type === 'task' && atom.priority}
-        <span class="prio prio-{atom.priority}">
-          {PRIORITY_LABELS[atom.priority] ?? atom.priority}
-        </span>
-      {/if}
-
-      {#if atom.type === 'task' && atom.deadline_date}
-        <span class="deadline">
-          {new Date(atom.deadline_date).toLocaleDateString('de-DE', { day:'numeric', month:'numeric' })}
-        </span>
-      {/if}
-
-      <div class="avatars">
-        {#each atom.responsible as person}
-          <PersonAvatar {person} />
-        {/each}
-      </div>
-
-      <div class="projects">
-        {#each atom.projects as project}
-          <ProjectBadge {project} />
-        {/each}
-      </div>
-
-      <button
-        class="captured-btn"
-        class:is-captured={atom.captured}
-        onclick={(e) => { e.stopPropagation(); oncapturedtoggle(atom) }}
-        title={atom.captured ? 'Erfasst' : 'Nicht erfasst'}
-        aria-label="Erfasst togglen"
-      >
-        {atom.captured ? '✓' : '○'}
-      </button>
-    </div>
   </div>
+
+  <span class="col-title" class:strikethrough={atom.status === 'done'}>
+    {atom.title}
+  </span>
+
+  <div class="col-status">
+    {#if atom.type === 'task' && atom.status}
+      <span class="status-badge status-{atom.status}">
+        {STATUS_LABELS[atom.status] ?? atom.status}
+      </span>
+    {/if}
+  </div>
+
+  <div class="col-prio">
+    {#if atom.type === 'task' && atom.priority}
+      <span class="prio prio-{atom.priority}">
+        {PRIORITY_LABELS[atom.priority] ?? atom.priority}
+      </span>
+    {/if}
+  </div>
+
+  <div class="col-deadline">
+    {#if atom.type === 'task' && atom.deadline_date}
+      <span class="deadline">
+        {new Date(atom.deadline_date).toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' })}
+      </span>
+    {/if}
+  </div>
+
+  <div class="col-persons">
+    {#each atom.responsible as person}
+      <PersonAvatar {person} />
+    {/each}
+  </div>
+
+  <div class="col-projects">
+    {#each atom.projects as project}
+      <ProjectBadge {project} />
+    {/each}
+  </div>
+
+  <button
+    class="col-captured"
+    class:is-captured={atom.captured}
+    onclick={(e) => { e.stopPropagation(); oncapturedtoggle(atom) }}
+    title={atom.captured ? 'Erfasst' : 'Nicht erfasst'}
+    aria-label="Erfasst togglen"
+  >
+    {atom.captured ? '✓' : '○'}
+  </button>
 
   {#if isExpanded && atom.content}
     <div class="preview">{atom.content}</div>
@@ -104,66 +108,99 @@
 
 <style>
   .row {
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.1s;
-  }
-  .row:hover { background: var(--bg-hover); }
-  .row.selected { border-left: 3px solid var(--accent); }
-  .row-main {
-    display: flex;
+    display: grid;
+    grid-template-columns: var(--atom-cols);
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    min-height: 2.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: box-shadow 0.12s, border-color 0.12s;
+    min-height: 2.75rem;
   }
-  .expand-btn {
+  .row:hover {
+    border-color: #D1D5DB;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .row.selected {
+    border-color: var(--accent);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+  }
+  .row.done { opacity: 0.6; }
+
+  .col-expand {
     background: none;
     border: none;
     color: var(--text-muted);
-    padding: 0 0.25rem;
     font-size: 0.75rem;
-    line-height: 1;
-    flex-shrink: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px 0 0 8px;
   }
-  .title {
-    flex: 1;
+  .col-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .col-title {
     font-size: 0.875rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    padding-right: 0.75rem;
   }
   .strikethrough { text-decoration: line-through; color: var(--text-muted); }
-  .meta {
+
+  .col-status,
+  .col-prio,
+  .col-deadline,
+  .col-persons,
+  .col-projects {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
+    gap: 0.2rem;
+    overflow: hidden;
   }
+
   .status-badge {
-    font-size: 0.72rem;
-    padding: 0.1rem 0.4rem;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
     border-radius: 4px;
     background: var(--border);
+    white-space: nowrap;
   }
   .status-done { color: var(--accent); background: var(--accent-light); }
+  .status-in_progress { color: #3B82F6; background: #DBEAFE; }
+  .status-blocked { color: #EF4444; background: #FEE2E2; }
+
   .prio { font-size: 0.72rem; color: var(--text-muted); }
-  .prio-high { color: #EF4444; }
+  .prio-high { color: #EF4444; font-weight: 600; }
+  .prio-medium { color: #F59E0B; }
+
   .deadline { font-size: 0.72rem; color: var(--text-muted); }
-  .avatars, .projects { display: flex; gap: 0.2rem; align-items: center; }
-  .captured-btn {
+
+  .col-captured {
     background: none;
     border: none;
     font-size: 0.85rem;
     color: var(--text-muted);
-    padding: 0.1rem 0.3rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 8px 8px 0;
   }
-  .captured-btn.is-captured { color: var(--accent); }
+  .col-captured.is-captured { color: var(--accent); }
+
   .preview {
-    padding: 0.25rem 1rem 0.6rem 3rem;
+    grid-column: 1 / -1;
+    padding: 0.5rem 1rem 0.65rem 3.5rem;
     font-size: 0.8rem;
     color: var(--text-muted);
     white-space: pre-wrap;
     word-break: break-word;
+    border-top: 1px solid var(--border);
   }
 </style>
