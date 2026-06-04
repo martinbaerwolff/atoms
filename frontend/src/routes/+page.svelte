@@ -1,11 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { Atom, FilterBadge } from '$lib/api/types'
-  import { getAtoms, updateAtom } from '$lib/api/atoms'
+  import type { Atom, AtomUpdate, FilterBadge, Person, Project } from '$lib/api/types'
+  import { getAtoms, updateAtom, deleteAtom, createAtom } from '$lib/api/atoms'
+  import { getPersons } from '$lib/api/persons'
+  import { getProjects } from '$lib/api/projects'
   import AtomRow from '$lib/components/AtomRow.svelte'
   import FilterBadges from '$lib/components/FilterBadges.svelte'
+  import AtomPanel from '$lib/components/AtomPanel.svelte'
 
   let atoms = $state<Atom[]>([])
+  let allPersons = $state<Person[]>([])
+  let allProjects = $state<Project[]>([])
   let selectedAtom = $state<Atom | null>(null)
   let activeFilter = $state<FilterBadge | null>(null)
   let allExpanded = $state(false)
@@ -24,7 +29,9 @@
     }
   }
 
-  onMount(load)
+  onMount(async () => {
+    await Promise.all([load(), getPersons().then(p => { allPersons = p }), getProjects().then(p => { allProjects = p })])
+  })
 
   $effect(() => {
     void activeFilter
@@ -39,6 +46,24 @@
 
   function handleSelect(atom: Atom) {
     selectedAtom = selectedAtom?.id === atom.id ? null : atom
+  }
+
+  async function handleSave(id: string, data: AtomUpdate) {
+    const updated = await updateAtom(id, data)
+    atoms = atoms.map(a => a.id === id ? updated : a)
+    selectedAtom = updated
+  }
+
+  async function handleDelete(id: string) {
+    await deleteAtom(id)
+    atoms = atoms.filter(a => a.id !== id)
+    selectedAtom = null
+  }
+
+  async function handleNew() {
+    const created = await createAtom({ title: 'Neuer Eintrag', type: 'note' })
+    atoms = [created, ...atoms]
+    selectedAtom = created
   }
 </script>
 
@@ -55,7 +80,7 @@
       <button class="btn-ghost" class:active={allExpanded} onclick={() => (allExpanded = true)}>
         Detail
       </button>
-      <button class="btn-primary">+ Neu</button>
+      <button class="btn-primary" onclick={handleNew}>+ Neu</button>
     </div>
   </header>
 
@@ -83,10 +108,14 @@
     </div>
 
     {#if selectedAtom}
-      <div class="panel-placeholder">
-        <p style="padding:1rem; color: var(--text-muted)">Panel kommt in Task 13</p>
-        <button onclick={() => (selectedAtom = null)}>✕</button>
-      </div>
+      <AtomPanel
+        atom={selectedAtom}
+        {allPersons}
+        {allProjects}
+        onsave={handleSave}
+        ondelete={handleDelete}
+        onclose={() => (selectedAtom = null)}
+      />
     {/if}
   </div>
 </div>
@@ -129,11 +158,6 @@
 
   .content { display: flex; flex: 1; overflow: hidden; }
   .list-area { flex: 1; overflow-y: auto; }
-  .panel-placeholder {
-    width: 360px;
-    border-left: 1px solid var(--border);
-    flex-shrink: 0;
-  }
   .content.panel-open .list-area { flex: 1; }
 
   .empty { padding: 2rem 1.5rem; color: var(--text-muted); font-size: 0.875rem; }
