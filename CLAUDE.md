@@ -50,7 +50,7 @@ Planung und Implementierung laufen in getrennten Sessions:
 **Beim Start einer neuen Session:**
 - Prüfe ob ein offener Implementierungsplan existiert (`docs/superpowers/plans/`).
   Falls ja: biete dem Nutzer an, `/executing-plans` zu starten — aber frag erst, mach es nicht automatisch.
-- Prüfe offene GitHub Issues (`gh issue list --state open`).
+- Prüfe offene GitHub Issues (`gh issue list --state open`) und offene Pull Requests (`gh pr list --state open`).
   Fasse kurz zusammen was offen ist, damit der Nutzer entscheiden kann womit wir anfangen.
 
 **In laufenden Sessions:** Warne den Nutzer, wenn er Implementierungsarbeit in einer
