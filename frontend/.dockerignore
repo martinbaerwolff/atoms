@@ -1,6 +1,0 @@
-node_modules/
-build/
-.svelte-kit/
-.vite/
-playwright-report/
-test-results/
